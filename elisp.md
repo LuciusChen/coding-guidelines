@@ -43,9 +43,31 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 - Use text properties for data-bearing annotations; overlays only for ephemeral visuals.
 - Build render buffers from cached data, not by reparsing displayed text.
 
+### Autoloads
+
+- Add `;;;###autoload` to user-facing commands (entry points users call via `M-x`) and user-facing minor modes.
+- Do NOT autoload internal helpers, variables, or private modes.
+- Internal modes that are not part of the user-facing API should use double-dash prefix (`pkg--foo-mode`).
+
+### Dependencies
+
+- `cl-lib` functions require `(require 'cl-lib)` — do not rely on transitive loading.
+- Avoid `eval-when-compile` for runtime-needed dependencies.
+
 ### Quality Checks
 
 - Every file starts with `;;; -*- lexical-binding: t; -*-`.
 - Every file ends with `(provide 'pkg)` / `;;; pkg.el ends here`.
 - Byte-compile with zero warnings.
 - All public functions must have docstrings.
+- Docstring first line must be a complete sentence ending with a period.
+- Argument names in docstrings should be UPPERCASED.
+
+### MELPA / Package Conventions
+
+- First line: `;;; file.el --- Short description -*- lexical-binding: t; -*-`
+  - Description must NOT contain "for Emacs" or the package name — both are redundant.
+  - Keep the description under 60 characters.
+- Required headers for the main package file: `;; Author:`, `;; URL:`, `;; Version:`, `;; Package-Requires:` (list all direct dependencies with minimum versions).
+- Last line: `;;; file.el ends here`
+- Before using a newer Emacs API, verify when the symbol was introduced (`M-x find-function`). Guard or avoid symbols above the project's declared baseline.

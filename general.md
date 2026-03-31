@@ -29,6 +29,11 @@
 - Separate pure computation from side effects (I/O, display mutation, state changes).
 - Interactive entry points should be thin wrappers: validate input, call internal function, show feedback.
 
+## Documentation Discipline
+
+- **User-visible changes must update docs in the same commit**: any change to key bindings, defaults, configuration, or user-facing workflow must update the project's user documentation (README, PRD, etc.) in the same change.
+- **Code is source of truth**: if code and docs diverge, fix docs immediately.
+
 ## Pre-Commit Discipline
 
 - **Read the full diff** before committing. Every changed line.
