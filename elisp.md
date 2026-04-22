@@ -59,6 +59,9 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 - Every file starts with `;;; -*- lexical-binding: t; -*-`.
 - Every file ends with `(provide 'pkg)` / `;;; pkg.el ends here`.
 - Byte-compile with zero warnings.
+- Run `checkdoc` with zero warnings.
+- Run `package-lint` with zero warnings for distributable package files.
+- Treat byte-compilation, `checkdoc`, and `package-lint` as mandatory pre-commit quality gates for MELPA/ELPA-style packages.
 - All public functions must have docstrings.
 - Docstring first line must be a complete sentence ending with a period.
 - Argument names in docstrings should be UPPERCASED.
