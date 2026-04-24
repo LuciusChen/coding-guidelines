@@ -1,6 +1,6 @@
 # coding-guidelines
 
-Shared coding guidelines for AI-assisted development. Referenced by project-level instruction files (`CLAUDE.md`, `AGENTS.md`, etc.).
+Shared coding guidelines for AI-assisted development. Use them as source material for project-level instruction files (`CLAUDE.md`, `AGENTS.md`, etc.).
 
 ## Structure
 
@@ -10,15 +10,17 @@ Shared coding guidelines for AI-assisted development. Referenced by project-leve
 
 ## Usage
 
-In a project's AI instruction file (e.g., `CLAUDE.md`, `AGENTS.md`), reference the relevant guideline files by path:
+For each project, copy the rules you actually want into that project's own AI instruction file (e.g., `CLAUDE.md`, `AGENTS.md`) and adapt the wording to the project.
 
 ```markdown
-Follow the guidelines in:
-- ~/repos/coding-guidelines/general.md
-- ~/repos/coding-guidelines/elisp.md
+## Shared Rules
+
+- Prefer simple solutions over clever abstractions.
+- Run the full test suite before committing.
+- Run `checkdoc` and `package-lint` with zero warnings for Emacs Lisp packages.
 ```
 
-The AI agent reads these files on demand — no syncing or copying needed. Each project's instruction file only needs to contain project-specific rules (architecture, workflows, domain logic) that are not covered here.
+Do not treat this repository as something the agent must reference at runtime. The project's own instruction file should be self-contained, with shared rules copied in and project-specific rules added alongside them.
 
 ## Maintenance
 
