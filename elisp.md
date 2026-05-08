@@ -7,7 +7,7 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 ### Naming
 
 - **Public functions**: use a consistent package prefix (e.g., `clutch-`, `my-`). No double dash for public API.
-- **Private/internal**: double-dash prefix (e.g., `clutch--helper`). Never call from outside the defining file.
+- **Private/internal**: double-dash prefix (e.g., `clutch--helper`). Never call from outside the owning subsystem.
 - **Predicates**: multi-word names end in `-p`.
 - **Unused args**: prefix with `_`.
 
@@ -42,6 +42,7 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 
 - Use text properties for data-bearing annotations; overlays only for ephemeral visuals.
 - Build render buffers from cached data, not by reparsing displayed text.
+- Rendering should be deterministic from structured buffer-local state. Do not derive behavior from visible strings when text properties or cached data can carry the state.
 
 ### Autoloads
 
@@ -53,6 +54,7 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 
 - `cl-lib` functions require `(require 'cl-lib)` — do not rely on transitive loading.
 - Avoid `eval-when-compile` for runtime-needed dependencies.
+- When split modules use functions or variables from sibling files, add explicit `declare-function` or `defvar` forms so byte-compilation remains honest.
 
 ### Quality Checks
 
