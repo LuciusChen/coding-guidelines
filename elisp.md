@@ -18,6 +18,12 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 - Use `pcase` / `pcase-let` for structured destructuring instead of nested `car`/`cdr`/`nth`.
 - Prefer `cl-loop` over `dolist` + manual accumulators for non-trivial iteration. `cl-reduce` is acceptable for simple single-operation folds.
 
+### Data Shape and Abstraction
+
+- Prefer `let*`, `pcase-let`, alists/plists, small helpers, or table-driven mappings for short-lived context.
+- Reserve `cl-defstruct` or object-style layers for stable data that crosses module or lifecycle boundaries, such as connection, result, request, or protocol state.
+- A short, linear `let*` is often clearer than a one-use context object plus accessors.
+
 ### Error Handling
 
 - **`user-error`** for user-caused problems. Does NOT trigger `debug-on-error`.
@@ -49,6 +55,11 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 - Add `;;;###autoload` to user-facing commands (entry points users call via `M-x`) and user-facing minor modes.
 - Do NOT autoload internal helpers, variables, or private modes.
 - Internal modes that are not part of the user-facing API should use double-dash prefix (`pkg--foo-mode`).
+
+### Completion
+
+- Completion-at-point functions should stay close to the Emacs protocol: compute bounds and candidates directly, return the standard completion list, and avoid a separate completion context model unless multiple real call paths share it.
+- CAPFs should return quickly and avoid synchronous work that can re-enter or block the UI unless the backend explicitly supports it.
 
 ### Dependencies
 
