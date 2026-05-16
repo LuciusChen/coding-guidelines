@@ -1,6 +1,7 @@
 ## Core Principles
 
 - **Question every abstraction**: Before adding a layer, file, or indirection, ask whether it solves a current problem. If the answer is hypothetical, do not add it. A refactor should remove duplication, centralize a rule, or make callers simpler; wrappers around a single use site rarely pay for themselves.
+- **Root out helper stacking**: A pile of small helpers, one-use wrappers, accessors, and pass-through functions is structural debt, not just naming noise. When you find it, identify the missing owner or duplicated rule and remove the stack at that level: inline trivial one-use helpers, collapse wrapper ladders into one direct path, or extract a coherent workflow module that owns the state, commands, and formatting together.
 - **Simplify relentlessly**: Three similar lines are better than a premature abstraction. A single large file is better than several tiny files with unclear boundaries.
 - **Fewer files, clearer boundaries**: Split only when a file has a genuinely distinct responsibility. Never split for cosmetic reasons.
 - **Delete, don't deprecate**: Remove unused code entirely. No backward-compatibility shims, re-exports, or "removed" comments.

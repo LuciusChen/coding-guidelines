@@ -23,6 +23,7 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 - Prefer `let*`, `pcase-let`, alists/plists, small helpers, or table-driven mappings for short-lived context.
 - Reserve `cl-defstruct` or object-style layers for stable data that crosses module or lifecycle boundaries, such as connection, result, request, or protocol state.
 - A short, linear `let*` is often clearer than a one-use context object plus accessors.
+- Treat helper piles as design debt. If several private functions only rename, strip, forward, or wrap data for one call path, collapse them into direct code or a table-driven mapping. If the helpers are hiding a larger ownership problem, extract the whole workflow with its state and commands instead of creating a vague `utils` module.
 
 ### Error Handling
 
