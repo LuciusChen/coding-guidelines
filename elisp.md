@@ -67,6 +67,11 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 - `cl-lib` functions require `(require 'cl-lib)` — do not rely on transitive loading.
 - Avoid `eval-when-compile` for runtime-needed dependencies.
 - When split modules use functions or variables from sibling files, add explicit `declare-function` or `defvar` forms so byte-compilation remains honest.
+- Compatibility shims should stay under the package's private prefix. If the
+  upstream function exists, prefer a prefixed `defalias` over an unprefixed
+  replacement that can confuse package tooling.
+- Avoid `with-eval-after-load` in package code unless it is registering an
+  optional integration at a clear package boundary.
 
 ### Quality Checks
 
@@ -79,12 +84,23 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 - All public functions must have docstrings.
 - Docstring first line must be a complete sentence ending with a period.
 - Argument names in docstrings should be UPPERCASED.
+- For split packages, run checkdoc across all distributable `*.el` files, not
+  only the main package entry file.
 
 ### MELPA / Package Conventions
 
 - First line: `;;; file.el --- Short description -*- lexical-binding: t; -*-`
   - Description must NOT contain "for Emacs" or the package name — both are redundant.
   - Keep the description under 60 characters.
-- Required headers for the main package file: `;; Author:`, `;; URL:`, `;; Version:`, `;; Package-Requires:` (list all direct dependencies with minimum versions).
+- Required headers for the main package file: `;; Author:`, `;; URL:`, `;; Version:`, `;; Package-Requires:` (list all direct dependencies with minimum versions, including the declared Emacs baseline).
+- In a split package, package metadata belongs in the main package file only.
+  Implementation files must not carry `;; Package-Requires:` headers.
+- Split implementation files still need formal license metadata, preferably
+  `;; SPDX-License-Identifier:`.
+- Keep required MELPA checklist attribution, such as `;; Assisted-by: ...`, in
+  the main package file when tooling materially assisted the package.
+- When using `package-lint` on split implementation files, configure the main
+  file (for example, `package-lint-main-file`) instead of duplicating package
+  metadata across files.
 - Last line: `;;; file.el ends here`
 - Before using a newer Emacs API, verify when the symbol was introduced (`M-x find-function`). Guard or avoid symbols above the project's declared baseline.
