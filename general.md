@@ -38,6 +38,8 @@
 
 - **User-visible changes must update docs in the same commit**: any change to key bindings, defaults, configuration, or user-facing workflow must update the project's user documentation (README, PRD, etc.) in the same change.
 - **Code is source of truth**: if code and docs diverge, fix docs immediately.
+- **Optimize docs for rendered reading, not source-width aesthetics**: do not rewrap unchanged Markdown, Org, or similar prose just to fit a column. Rendered documents already wrap naturally.
+- **Fix structure before line breaks**: when documentation feels hard to read, use a clearer heading, table, shorter bullets, or focused rewrite. Avoid changes whose only effect is different source line breaks.
 
 ## Pre-Commit Discipline
 
