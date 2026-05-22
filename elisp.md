@@ -2,12 +2,12 @@
 
 ### No Side Effects on Load
 
-Loading a file must not alter Emacs behavior. Activation must be explicit (user calls a command or enables a mode).
+Loading a file must not alter the user's active editing behavior. Activation must be explicit (user calls a command or enables a mode). Declarative package registration is acceptable at load time when it is the package boundary: mode associations, backend registrations, action registrations, cleanup hooks, and similar integrations.
 
 ### Naming
 
-- **Public functions**: use a consistent package prefix (e.g., `clutch-`, `my-`). No double dash for public API.
-- **Private/internal**: double-dash prefix (e.g., `clutch--helper`). Never call from outside the owning subsystem.
+- **Public functions**: use a consistent package prefix (e.g., `pkg-`, `my-`). No double dash for public API.
+- **Private/internal**: double-dash prefix (e.g., `pkg--helper`). Never call from outside the owning subsystem.
 - **Predicates**: multi-word names end in `-p`.
 - **Unused args**: prefix with `_`.
 
@@ -17,6 +17,7 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 - Use `if-let*`, `when-let*` for conditional binding.
 - Use `pcase` / `pcase-let` for structured destructuring instead of nested `car`/`cdr`/`nth`.
 - Prefer `cl-loop` over `dolist` + manual accumulators for non-trivial iteration. `cl-reduce` is acceptable for simple single-operation folds.
+- Prefer idiomatic primitives over reconstructed equivalents. For example, use `vconcat` to build vectors from lists rather than `apply #'vector`, and return predicate values directly instead of wrapping them in `(not (null ...))`.
 
 ### Data Shape and Abstraction
 
@@ -29,7 +30,7 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 
 - **`user-error`** for user-caused problems. Does NOT trigger `debug-on-error`.
 - **`error`** for programmer bugs only.
-- **`condition-case`** for recoverable failures. Wrap non-essential operations so errors never block primary results.
+- **`condition-case`** only at explicit boundaries or around genuinely recoverable non-essential operations. Do not catch internal failures just to return a plausible default.
 - Error messages should state what is wrong, not what should be (e.g., "Not connected" not "Must be connected").
 
 ### State Management
@@ -51,6 +52,11 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 - Build render buffers from cached data, not by reparsing displayed text.
 - Rendering should be deterministic from structured buffer-local state. Do not derive behavior from visible strings when text properties or cached data can carry the state.
 
+### Emacs Infrastructure
+
+- Prefer stock Emacs primitives and protocols over custom frameworks: `completing-read`, `special-mode`, standard hooks, text properties, and `text-property-search-forward` are usually better starting points than bespoke dispatch, UI, or parsing layers.
+- Keep target resolution, action definition, and action presentation separate. Presentation integrations such as menus, prefix command UIs, or external action packages should not become independent business-logic systems.
+
 ### Autoloads
 
 - Add `;;;###autoload` to user-facing commands (entry points users call via `M-x`) and user-facing minor modes.
@@ -59,8 +65,10 @@ Loading a file must not alter Emacs behavior. Activation must be explicit (user 
 
 ### Completion
 
+- Use standard `completing-read` for interactive selection unless the package has a specific reason to provide a custom reader.
 - Completion-at-point functions should stay close to the Emacs protocol: compute bounds and candidates directly, return the standard completion list, and avoid a separate completion context model unless multiple real call paths share it.
-- CAPFs should return quickly and avoid synchronous work that can re-enter or block the UI unless the backend explicitly supports it.
+- CAPFs should return quickly, use `:exclusive 'no` when they should compose with other completion sources, and avoid synchronous work that can re-enter or block the UI unless the backend explicitly supports it.
+- Add CAPFs buffer-locally with `add-hook` and LOCAL=`t`.
 
 ### Dependencies
 

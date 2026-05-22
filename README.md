@@ -6,7 +6,10 @@ Shared coding guidelines for AI-assisted development. Use them as source materia
 
 - **`general.md`** — Language-agnostic engineering principles: simplicity, diagnosis discipline, testing, pre-commit checks, postmortem conventions.
 - **`elisp.md`** — Emacs Lisp conventions: naming, control flow, error handling, state management, mode definitions, quality checks.
+- **`javascript.md`** — JavaScript conventions: modules, data flow, async/error handling, boundaries, browser/runtime discipline.
+- **`typescript.md`** — TypeScript conventions: strictness, type narrowing, assertions, generics, runtime validation, type-level tests.
 - **`java.md`** — Java conventions: naming, control flow, error handling, logging, version baseline discipline, quality checks.
+- **`css.md`** — CSS conventions: selector specificity, naming, cascade architecture, design tokens, responsive and accessible styling.
 
 ## Usage
 
