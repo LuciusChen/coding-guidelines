@@ -8,6 +8,7 @@ Loading a file must not alter the user's active editing behavior. Activation mus
 
 - **Public functions**: use a consistent package prefix (e.g., `pkg-`, `my-`). No double dash for public API.
 - **Private/internal**: double-dash prefix (e.g., `pkg--helper`). Never call from outside the owning subsystem.
+- **External private symbols**: never call another package's double-dash symbols. If the package needs behavior that only exists behind a private helper, add or request a public API in that package and depend on the version that provides it.
 - **Predicates**: multi-word names end in `-p`.
 - **Unused args**: prefix with `_`.
 
@@ -31,6 +32,7 @@ Loading a file must not alter the user's active editing behavior. Activation mus
 - **`user-error`** for user-caused problems. Does NOT trigger `debug-on-error`.
 - **`error`** for programmer bugs only.
 - **`condition-case`** only at explicit boundaries or around genuinely recoverable non-essential operations. Do not catch internal failures just to return a plausible default.
+- Do not wrap standard errors without adding semantics. Use `user-error` or `error` directly unless a wrapper adds behavior that the builtin does not provide and the docstring names that behavior.
 - Error messages should state what is wrong, not what should be (e.g., "Not connected" not "Must be connected").
 
 ### State Management
@@ -75,6 +77,7 @@ Loading a file must not alter the user's active editing behavior. Activation mus
 - `cl-lib` functions require `(require 'cl-lib)` — do not rely on transitive loading.
 - Avoid `eval-when-compile` for runtime-needed dependencies.
 - When split modules use functions or variables from sibling files, add explicit `declare-function` or `defvar` forms so byte-compilation remains honest.
+- Do not use declarations as boundary patches. A new `declare-function` to a higher-level module, or to an external private symbol, is a design smell; move the interface to the owner module or expose a real public API instead.
 - Compatibility shims should stay under the package's private prefix. If the
   upstream function exists, prefer a prefixed `defalias` over an unprefixed
   replacement that can confuse package tooling.
@@ -89,7 +92,7 @@ Loading a file must not alter the user's active editing behavior. Activation mus
 - Run `checkdoc` with zero warnings.
 - Run `package-lint` with zero warnings for distributable package files.
 - Treat byte-compilation, `checkdoc`, and `package-lint` as mandatory pre-commit quality gates for MELPA/ELPA-style packages.
-- All public functions must have docstrings.
+- All public `defun`, `defmacro`, `defcustom`, and `defvar` forms must have docstrings.
 - Docstring first line must be a complete sentence ending with a period.
 - Argument names in docstrings should be UPPERCASED.
 - For split packages, run checkdoc across all distributable `*.el` files, not
